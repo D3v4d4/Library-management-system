@@ -1,0 +1,130 @@
+{% extends 'nav.html' %}
+{% load static %}
+
+{% block title %}Admin Login | Library Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Full-page centering below the navbar, above footer */
+  .auth-wrap{
+    min-height: calc(100vh - 72px - 60px);
+    display: grid;
+    place-items: center;
+    padding: 32px 0;
+  }
+  .auth-card{
+    max-width: 560px;
+    width: 100%;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(2,6,23,.10);
+    overflow: hidden;
+    background: #fff;
+  }
+  .auth-header{
+    background: linear-gradient(90deg, var(--brand-bg), #111827);
+    color:#fff;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap:.75rem;
+  }
+  .auth-header i{ color: var(--brand-accent); }
+  .input-group-text{ background: #f3f4f6; }
+  .form-control, .input-group-text{ border-radius: 10px; }
+  .form-label{ font-weight: 600; }
+  .avatar{
+    width: 90px; height: 90px; object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 4px 16px rgba(2,6,23,.15);
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="auth-wrap">
+  <div class="card auth-card">
+    <div class="auth-header">
+      <i class="fa-solid fa-user-shield fs-4"></i>
+      <div>
+        <h3 class="mb-0">Admin Login</h3>
+        <small class="opacity-75">Sign in to manage the library</small>
+      </div>
+    </div>
+
+    <div class="card-body p-4">
+      <div class="text-center mb-3">
+        <img src="{% static 'images/admin.png' %}" alt="Admin" class="avatar">
+      </div>
+
+      <form method="post" action="">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label" for="username">Username</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+            <button type="button" class="btn btn-outline-secondary" id="togglePwd" aria-label="Show password">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" name="login" class="btn btn-brand">
+            <i class="fa-solid fa-right-to-bracket me-1"></i> Login
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Show/Hide password (UI-only, backend logic untouched)
+  const toggle = document.getElementById('togglePwd');
+  if (toggle){
+    toggle.addEventListener('click', function(){
+      const inp = document.getElementById('password');
+      const icon = this.querySelector('i');
+      const isPwd = inp.getAttribute('type') === 'password';
+      inp.setAttribute('type', isPwd ? 'text' : 'password');
+      icon.classList.toggle('fa-eye');
+      icon.classList.toggle('fa-eye-slash');
+    });
+  }
+</script>
+
+{% if error == "no" %}
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: 'Logged in successfully',
+    showConfirmButton: false,
+    timer: 1400
+  }).then(() => {
+    window.location.href = "{% url 'addbook' %}";
+  });
+</script>
+{% endif %}
+
+{% if error == "yes" %}
+<script>
+  Swal.fire({
+    icon: 'error',
+    title: 'Invalid Login Credentials',
+    text: 'Please check your username and password and try again.'
+  });
+</script>
+{% endif %}
+{% endblock %}

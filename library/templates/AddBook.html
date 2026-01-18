@@ -1,0 +1,98 @@
+{% extends 'navigation.html' %}
+{% load static %}
+
+{% block title %}Add Book | Library Management System{% endblock %}
+
+{% block body %}
+<style>
+  .add-card{
+    border:0; border-radius:18px; background:#fff;
+    box-shadow:0 12px 30px rgba(2,6,23,.10); overflow:hidden;
+  }
+  .add-header{
+    background: linear-gradient(90deg, var(--brand-bg, #0f172a), #111827);
+    color:#fff; padding:18px 20px; display:flex; align-items:center; gap:.75rem;
+  }
+  .add-header i{ color: var(--brand-accent, #f59e0b); }
+  .form-label{ font-weight:600; }
+  .form-control, .input-group-text{ border-radius:10px; }
+  .input-group-text{ background:#f3f4f6; }
+  /* Fallback if .btn-brand not in base */
+  .btn-brand{
+    --bs-btn-padding-x: .9rem; --bs-btn-padding-y: .5rem; --bs-btn-font-weight:600; --bs-btn-border-radius:999px;
+    --bs-btn-color:#fff; --bs-btn-bg: var(--brand-primary,#0ea5a4); --bs-btn-border-color: var(--brand-primary,#0ea5a4);
+    --bs-btn-hover-color:#fff; --bs-btn-hover-bg:#0c8f8e; --bs-btn-hover-border-color:#0c8f8e;
+  }
+</style>
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      <div class="card add-card">
+        <div class="add-header">
+          <i class="fa-solid fa-book fs-5"></i>
+          <h5 class="mb-0">Add Book</h5>
+        </div>
+
+        <div class="card-body p-4">
+          <form method="post" action="">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label for="book" class="form-label">Book Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-book"></i></span>
+                <input type="text" id="book" name="book" class="form-control" placeholder="Enter book title" required autofocus>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="author" class="form-label">Author Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-pen-nib"></i></span>
+                <input type="text" id="author" name="author" class="form-control" placeholder="Enter author name" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="category" class="form-label">Category</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-tags"></i></span>
+                <input type="text" id="category" name="category" class="form-control" placeholder="e.g., Computer Science, Fiction" required>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="isbn" class="form-label">ISBN</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fa-solid fa-barcode"></i></span>
+                  <input type="number" id="isbn" name="isbn" class="form-control" placeholder="Enter ISBN" min="0" required>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="quantity" class="form-label">Quantity</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fa-solid fa-boxes-stacked"></i></span>
+                  <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Number of copies" min="0" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <a href="{% url 'viewbook' %}" class="btn btn-outline-dark">
+                <i class="fa-solid fa-list-ul me-1"></i> View Books
+              </a>
+              <button type="submit" name="submit" class="btn btn-brand">
+                <i class="fa-solid fa-circle-plus me-1"></i> Add Book
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

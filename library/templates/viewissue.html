@@ -1,0 +1,153 @@
+
+{% extends 'navigation.html' %}
+{% load static %}
+{% block title %}Issued Books | Library Management System{% endblock %}
+{% block body %}
+<style>
+  .card-shell{ border:0; border-radius:18px; background:#fff; box-shadow:0 12px 30px rgba(2,6,23,.10); overflow:hidden; }
+  .card-header-brand{
+    background: linear-gradient(90deg, var(--brand-bg, #0f172a), #111827);
+    color:#fff; padding:16px 20px;
+  }
+  .search-wrap .input-group-text{ background:#f3f4f6; }
+  .search-wrap .form-control, .search-wrap .input-group-text{ border-radius:10px; }
+  /* Fallback if .btn-brand not defined in base */
+  .btn-brand{
+    --bs-btn-padding-x:.8rem; --bs-btn-padding-y:.45rem; --bs-btn-font-weight:600; --bs-btn-border-radius:999px;
+    --bs-btn-color:#fff; --bs-btn-bg: var(--brand-primary,#0ea5a4); --bs-btn-border-color: var(--brand-primary,#0ea5a4);
+    --bs-btn-hover-color:#fff; --bs-btn-hover-bg:#0c8f8e; --bs-btn-hover-border-color:#0c8f8e;
+  }
+</style>
+
+<div class="container py-4">
+  <div class="card card-shell">
+    <!-- Header -->
+    <div class="card-header-brand d-flex flex-wrap align-items-center gap-2">
+      <h5 class="mb-0"><i class="fa-solid fa-file-invoice me-2"></i> Issued Books</h5>
+      <div class="ms-auto d-flex gap-2">
+        <a href="{% url 'issuebook' %}" class="btn btn-brand btn-sm">
+          <i class="fa-solid fa-file-circle-plus me-1"></i> Issue New Book
+        </a>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="card-body">
+      <div class="row g-3 align-items-center justify-content-between mb-3">
+        <div class="col-12 col-md-auto">
+          <div class="input-group input-group-sm search-wrap" style="min-width:280px;">
+            <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input id="tableSearch" type="text" class="form-control" placeholder="Search student, book, author, ISBN…">
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive">
+        <table id="issuedTable" class="table table-hover table-bordered align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="width:72px;">S.N</th>
+              <th><i class="fa-solid fa-user me-1"></i> Student</th>
+              <th><i class="fa-solid fa-book me-1"></i> Book</th>
+              <th><i class="fa-solid fa-pen-nib me-1"></i> Author</th>
+              <th><i class="fa-solid fa-barcode me-1"></i> ISBN</th>
+              <th><i class="fa-regular fa-calendar-plus me-1"></i> Issue Date</th>
+              <th><i class="fa-regular fa-calendar-xmark me-1"></i> Expiry Date</th>
+              <th style="width:190px;"><i class="fa-solid fa-wrench me-1"></i> Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in data1 %}
+            <tr>
+              <td class="text-center">{{ forloop.counter }}</td>
+              <td>{{ i.studentinfo.user.username }}</td>
+              <td class="fw-semibold">{{ i.book.book_name }}</td>
+              <td>{{ i.book.author }}</td>
+              <td>{{ i.book.isbn }}</td>
+              <td>{{ i.issue_date|date:"M d, Y" }}</td>
+              <td>{{ i.expiry_date|date:"M d, Y" }}</td>
+              <td class="text-center">
+                <a href="{% url 'returnbook' i.id %}" 
+                   class="btn btn-sm btn-secondary confirm-return me-1"
+                   data-url="{% url 'returnbook' i.id %}"
+                   data-student="{{ i.studentinfo.user.username }}"
+                   data-book="{{ i.book.book_name }}">
+                  <i class="fa-solid fa-box-archive"></i> Return
+                </a>
+                <a href="{% url 'fine' i.id %}" class="btn btn-sm btn-brand">
+                  <i class="fa-solid fa-indian-rupee-sign"></i> Fine
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="8" class="text-center py-4 text-muted">
+                <i class="fa-regular fa-face-smile-beam me-1"></i> No active issues. All books are returned!
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Client-side search -->
+<script>
+  (function(){
+    const input = document.getElementById('tableSearch');
+    const table = document.getElementById('issuedTable');
+    if(!input || !table) return;
+
+    input.addEventListener('input', function(){
+      const q = this.value.trim().toLowerCase();
+      const rows = table.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const cols = Array.from(row.cells).slice(1, 5); // Student, Book, Author, ISBN
+        const hit = cols.some(td => (td.textContent || '').toLowerCase().includes(q));
+        row.style.display = hit ? '' : 'none';
+      });
+    });
+  })();
+</script>
+
+<!-- Confirm before Return -->
+<script>
+  (function(){
+    document.querySelectorAll('.confirm-return').forEach(btn => {
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        const url = this.getAttribute('data-url') || this.getAttribute('href');
+        const student = this.getAttribute('data-student') || 'this student';
+        const book = this.getAttribute('data-book') || 'this book';
+
+        Swal.fire({
+          icon:'question',
+          title:'Return this book?',
+          html: `<div class="text-start">
+                   <div><strong>Student:</strong> ${student}</div>
+                   <div><strong>Book:</strong> ${book}</div>
+                 </div>`,
+          showCancelButton:true,
+          confirmButtonText:'Yes, return',
+          cancelButtonText:'Cancel'
+        }).then(res => { if(res.isConfirmed){ window.location.href = url; } });
+      });
+    });
+  })();
+</script>
+
+<!-- Optional: show Django messages as toasts -->
+{% if messages %}
+<script>
+  (function(){
+    const Toast = Swal.mixin({ toast:true, position:'top-end', showConfirmButton:false, timer:2200, timerProgressBar:true });
+    {% for message in messages %}
+      Toast.fire({ icon:'info', title:"{{ message|escapejs }}" });
+    {% endfor %}
+  })();
+</script>
+{% endif %}
+{% endblock %}

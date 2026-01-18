@@ -1,0 +1,137 @@
+{% extends 'nav.html' %}
+{% load static %}
+
+{% block title %}Student Login | Library Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+  .auth-wrap{
+    min-height: calc(100vh - 72px - 60px);
+    display: grid;
+    place-items: center;
+    padding: 32px 0;
+  }
+  .auth-card{
+    max-width: 560px;
+    width: 100%;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(2,6,23,.10);
+    overflow: hidden;
+    background: #fff;
+  }
+  .auth-header{
+    background: linear-gradient(90deg, var(--brand-bg), #111827);
+    color:#fff;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap:.75rem;
+  }
+  .auth-header i{ color: var(--brand-accent); }
+  .input-group-text{ background: #f3f4f6; }
+  .form-control, .input-group-text{ border-radius: 10px; }
+  .form-label{ font-weight: 600; }
+  .avatar{
+    width: 90px; height: 90px; object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 4px 16px rgba(2,6,23,.15);
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="auth-wrap">
+  <div class="card auth-card">
+    <div class="auth-header">
+      <i class="fa-solid fa-graduation-cap fs-4"></i>
+      <div>
+        <h3 class="mb-0">Student Login</h3>
+        <small class="opacity-75">Access your library account</small>
+      </div>
+    </div>
+
+    <div class="card-body p-4">
+      <div class="text-center mb-3">
+        <img src="{% static 'images/Student.png' %}" alt="Student" class="avatar">
+      </div>
+
+      <form method="post" action="">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label" for="username">Username</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+            <input type="text" id="username" name="username" class="form-control"
+                   placeholder="Enter username" autocomplete="username" required>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+            <input type="password" id="password" name="password" class="form-control"
+                   placeholder="Enter password" autocomplete="current-password" required>
+            <button type="button" class="btn btn-outline-secondary" id="togglePwd" aria-label="Show password">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="d-grid mt-3">
+          <button type="submit" name="login" class="btn btn-brand">
+            <i class="fa-solid fa-right-to-bracket me-1"></i> Login
+          </button>
+        </div>
+      </form>
+
+      <div class="text-center mt-3">
+        <a href="{% url 'signupstudent' %}" class="link-dark text-decoration-none">
+          Not a member yet? <span class="fw-semibold">Register now</span> →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Show/Hide password
+  const toggle = document.getElementById('togglePwd');
+  if (toggle){
+    toggle.addEventListener('click', function(){
+      const inp = document.getElementById('password');
+      const icon = this.querySelector('i');
+      const isPwd = inp.getAttribute('type') === 'password';
+      inp.setAttribute('type', isPwd ? 'text' : 'password');
+      icon.classList.toggle('fa-eye');
+      icon.classList.toggle('fa-eye-slash');
+    });
+  }
+</script>
+
+{% if error == "no" %}
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: 'Logged in successfully',
+    showConfirmButton: false,
+    timer: 1400
+  }).then(() => {
+    window.location.href = "{% url 'vieworder' %}";
+  });
+</script>
+{% endif %}
+
+{% if error == "yes" %}
+<script>
+  Swal.fire({
+    icon: 'error',
+    title: 'Invalid Login Credentials',
+    text: 'Please check your username and password and try again.'
+  });
+</script>
+{% endif %}
+{% endblock %}

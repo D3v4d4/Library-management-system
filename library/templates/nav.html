@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}Library Management System{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap 5 (latest) -->
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        referrerpolicy="no-referrer" />
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root{
+      /* Custom palette – classic library vibe */
+      --brand-bg: #0f172a;      /* deep slate/navy */
+      --brand-primary: #0ea5a4; /* teal accent */
+      --brand-accent: #f59e0b;  /* amber highlight */
+      --brand-muted: #e5e7eb;   /* light gray */
+      --brand-text: #0b1220;    /* near-black */
+      --brand-card: #ffffff;    /* cards/backgrounds */
+    }
+
+    html, body { height: 100%; background: linear-gradient(180deg, #f8fafc 0%, #f3f4f6 100%); color: var(--brand-text); }
+
+    /* Navbar */
+    .navbar-brand i{ margin-right:.5rem; }
+    .navbar {
+      background: linear-gradient(90deg, var(--brand-bg) 0%, #111827 100%);
+      box-shadow: 0 2px 12px rgba(0,0,0,.15);
+    }
+    .navbar .nav-link, .navbar .navbar-brand {
+      color: #e5e7eb !important;
+    }
+    .navbar .nav-link:hover {
+      color: var(--brand-accent) !important;
+    }
+
+    /* Page wrapper */
+    .page-wrap{
+      min-height: calc(100vh - 72px - 60px); /* header + footer space */
+      padding: 24px 0;
+    }
+
+    /* Content container */
+    .container-main{
+      background: var(--brand-card);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, .08);
+      padding: 24px;
+    }
+
+    /* Section header helper (optional) */
+    .section-title{
+      display:flex; align-items:center; gap:.6rem; margin-bottom:1rem;
+      color: var(--brand-bg);
+    }
+    .section-title i{ color: var(--brand-primary); }
+
+    /* Buttons */
+    .btn-brand{
+      background: var(--brand-primary);
+      border: none;
+      color: #fff;
+    }
+    .btn-brand:hover,
+.btn-brand:focus{
+  color:#fff !important;
+  background-color:#0c8f8e !important;
+  border-color:#0c8f8e !important;
+}
+
+    /* Footer */
+    footer{
+      background: #0b1220;
+      color: #cbd5e1;
+      padding: 18px 0;
+    }
+    footer a { color: #cbd5e1; text-decoration: none; }
+    footer a:hover { color: var(--brand-accent); }
+
+    /* Utilities */
+    .badge-accent{
+      background: rgba(245,158,11,.12);
+      color: var(--brand-accent);
+      border: 1px solid rgba(245,158,11,.35);
+    }
+
+    /* Make tables, forms breathe without altering logic */
+    table.table { border-radius:12px; overflow:hidden; }
+    .form-control, .form-select { border-radius: 10px; }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Header / Navbar -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="{% url 'home' %}">
+        <i class="fa-solid fa-book-open-reader"></i>
+        Library Management System
+      </a>
+
+      <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+    <div class="collapse navbar-collapse" id="navMain">
+  <ul class="navbar-nav ms-auto align-items-lg-center">
+    <!-- Home -->
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'home' %}">
+        <i class="fa-solid fa-house-chimney me-1"></i> Home
+      </a>
+    </li>
+
+    <!-- About (safe fallback if URL name not created yet) -->
+    {% url 'about' as about_url %}
+    <li class="nav-item">
+      <a class="nav-link" href="{{ about_url|default:'/about/' }}">
+        <i class="fa-solid fa-circle-info me-1"></i> About
+      </a>
+    </li>
+
+    <!-- Student Login -->
+    <li class="nav-item ms-lg-2 my-2 my-lg-0">
+      <a class="btn btn-outline-light btn-sm" href="{% url 'studentlogin' %}">
+        <i class="fa-solid fa-graduation-cap me-1"></i> Student Login
+      </a>
+    </li>
+
+    <!-- Admin Login -->
+    <li class="nav-item ms-lg-2 my-2 my-lg-0">
+      <a class="btn btn-brand btn-sm" href="{% url 'loginadmin' %}">
+        <i class="fa-solid fa-user-shield me-1"></i> Admin Login
+      </a>
+    </li>
+
+    {% block nav_right %}{% endblock %}
+  </ul>
+</div>
+
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <main class="page-wrap">
+    <div class="container">
+      <div class="container-main">
+        {% block body %}{% endblock %}
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <div class="small">© {{ now|date:"Y" }} Library Management System</div>
+      <div class="small">Made for your institute • <span class="badge badge-accent rounded-pill px-3 py-2">Custom UI</span></div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS (Bundle includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+          crossorigin="anonymous"></script>
+
+  <!-- SweetAlert2 + Django messages integration -->
+  {% if messages %}
+  <script>
+    (function(){
+      const iconMap = { debug:'info', info:'info', success:'success', warning:'warning', error:'error' };
+      const toasts = [
+        {% for message in messages %}
+          {icon: iconMap['{{ message.tags }}'] || 'info', text: "{{ message|escapejs }}"},
+        {% endfor %}
+      ];
+      // Show one by one (modal) – or switch to toast mode below
+      toasts.forEach(m => Swal.fire({icon:m.icon, title:m.text}));
+      // Toast style example (switch to this block if preferred)
+      // const Toast = Swal.mixin({ toast:true, position:'top-end', showConfirmButton:false, timer:3000, timerProgressBar:true });
+      // toasts.forEach(m => Toast.fire({ icon:m.icon, title:m.text }));
+    })();
+  </script>
+  {% endif %}
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,111 @@
+{% extends 'nav.html' %}
+{% load static %}
+
+{% block title %}Home | Library Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Hero carousel */
+  .hero { border-radius: 16px; overflow: hidden; box-shadow: 0 12px 30px rgba(2,6,23,.10); }
+  .hero .carousel-item { position: relative; }
+  .hero .carousel-item img { width:100%; height:420px; object-fit:cover; }
+  .hero .overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(2,6,23,.55), rgba(0,0,0,.15)); }
+
+  /* Role cards */
+  .role-card{ transition: transform .2s ease, box-shadow .2s ease; border:1px solid rgba(2,6,23,.06); }
+  .role-card:hover{ transform: translateY(-4px); box-shadow:0 12px 26px rgba(2,6,23,.12); }
+  .role-icon{ font-size:2rem; color:var(--brand-primary); }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container pb-4">
+  <!-- Hero Carousel -->
+  <div id="heroCarousel" class="carousel slide hero mb-4" data-bs-ride="carousel" data-bs-interval="5000">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{% static 'images/700547-library-background-image-.jpg' %}" alt="Library shelves and reading area">
+        <div class="overlay"></div>
+        <div class="carousel-caption d-none d-md-block">
+          <h2 class="fw-bold">Welcome to Your Library</h2>
+          <p class="mb-0">Explore books, manage members, and track issues seamlessly.</p>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <img src="{% static 'images/women-with-books-in-library-dp-.jpg' %}" alt="Student reading books in library">
+        <div class="overlay"></div>
+        <div class="carousel-caption d-none d-md-block">
+          <h2 class="fw-bold">Read • Learn • Grow</h2>
+          <p class="mb-0">Search and reserve titles in a few clicks.</p>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <img src="{% static 'images/divya-student.jpg' %}" alt="Happy student with books">
+        <div class="overlay"></div>
+        <div class="carousel-caption d-none d-md-block">
+          <h2 class="fw-bold">Smart Library System</h2>
+          <p class="mb-0">Fast, reliable and built for your institute.</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="Previous">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="Next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <!-- Role Cards -->
+  <div class="row g-4 justify-content-center">
+    <!-- Administration -->
+    <div class="col-12 col-md-6 col-lg-5">
+      <div class="card role-card h-100">
+        <div class="card-body p-4 d-flex align-items-center">
+          <div class="me-3">
+            <i class="fa-solid fa-user-shield role-icon"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h5 class="card-title mb-1">Administration</h5>
+            <p class="card-text text-muted mb-3">Manage books, categories, members, and circulation.</p>
+            <a href="{% url 'loginadmin' %}" class="btn btn-brand">
+              <i class="fa-solid fa-right-to-bracket me-2"></i> Admin Login
+            </a>
+          </div>
+          <img src="{% static 'images/Staff.png' %}" class="ms-3 d-none d-md-block rounded-3"
+               style="width:120px;height:96px;object-fit:contain;" alt="Administration">
+        </div>
+      </div>
+    </div>
+
+    <!-- Student -->
+    <div class="col-12 col-md-6 col-lg-5">
+      <div class="card role-card h-100">
+        <div class="card-body p-4 d-flex align-items-center">
+          <div class="me-3">
+            <i class="fa-solid fa-graduation-cap role-icon"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h5 class="card-title mb-1">Student</h5>
+            <p class="card-text text-muted mb-3">Search books, view availability, and check status.</p>
+            <a href="{% url 'studentlogin' %}" class="btn btn-outline-dark">
+              <i class="fa-solid fa-right-to-bracket me-2"></i> Student Login
+            </a>
+          </div>
+          <img src="{% static 'images/stk_education.png' %}" class="ms-3 d-none d-md-block rounded-3"
+               style="width:120px;height:96px;object-fit:contain;" alt="Student">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

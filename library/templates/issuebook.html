@@ -1,0 +1,128 @@
+{% extends 'navigation.html' %}
+{% load static %}
+{% block title %}Issue Book | Library Management System{% endblock %}
+{% block body %}
+<style>
+  .issue-card{
+    border:0; border-radius:18px; background:#fff;
+    box-shadow:0 12px 30px rgba(2,6,23,.10); overflow:hidden;
+  }
+  .issue-header{
+    background: linear-gradient(90deg, var(--brand-bg, #0f172a), #111827);
+    color:#fff; padding:18px 20px; display:flex; align-items:center; gap:.75rem;
+  }
+  .issue-header i{ color: var(--brand-accent, #f59e0b); }
+  .form-label{ font-weight:600; }
+  .form-control, .form-select, .input-group-text{ border-radius:10px; }
+  .input-group-text{ background:#f3f4f6; }
+  /* Fallback if .btn-brand missing */
+  .btn-brand{
+    --bs-btn-padding-x:.9rem; --bs-btn-padding-y:.5rem; --bs-btn-font-weight:600; --bs-btn-border-radius:999px;
+    --bs-btn-color:#fff; --bs-btn-bg: var(--brand-primary,#0ea5a4); --bs-btn-border-color: var(--brand-primary,#0ea5a4);
+    --bs-btn-hover-color:#fff; --bs-btn-hover-bg:#0c8f8e; --bs-btn-hover-border-color:#0c8f8e;
+  }
+</style>
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      <div class="card issue-card">
+        <div class="issue-header">
+          <i class="fa-solid fa-file-circle-plus fs-5"></i>
+          <h5 class="mb-0">Issue Book</h5>
+        </div>
+
+        <div class="card-body p-4">
+          <form method="post" action="">
+            {% csrf_token %}
+
+            <!-- Enrollment -->
+            <div class="mb-3">
+              <label for="enroll" class="form-label">Enrollment No & Student Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-user-graduate"></i></span>
+                <select id="enroll" name="enroll" class="form-select" required>
+                  <option value="" disabled selected>Select student…</option>
+                  {% for i in studentinfo %}
+                    <option value="{{ i.rollNo }}">{{ i.rollNo }} [{{ i.user.first_name }}]</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <!-- Book -->
+            <div class="mb-3">
+              <label for="book" class="form-label">Book</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-book"></i></span>
+                <select id="book" name="book" class="form-select" required>
+                  <option value="" disabled selected>Select book…</option>
+                  {% for i in book %}
+                    <option value="{{ i.book_name }}" data-isbn="{{ i.isbn }}">
+                      ({{ forloop.counter }}) {{ i.book_name }} [{{ i.author }}]
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <!-- ISBN -->
+            <div class="mb-1">
+              <label for="isbn" class="form-label">ISBN</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-barcode"></i></span>
+                <select id="isbn" name="isbn" class="form-select" required>
+                  <option value="" disabled selected>Select ISBN…</option>
+                  {% for i in book %}
+                    <option value="{{ i.isbn }}">({{ forloop.counter }}) {{ i.isbn }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <button type="reset" class="btn btn-outline-dark">
+                <i class="fa-solid fa-rotate-left me-1"></i> Reset
+              </button>
+              <button type="submit" name="submit" class="btn btn-brand">
+                <i class="fa-solid fa-circle-check me-1"></i> Issue Book
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SweetAlert2 toasts for Django messages (optional) -->
+{% if messages %}
+<script>
+  (function(){
+    const Toast = Swal.mixin({ toast:true, position:'top-end', showConfirmButton:false, timer:2200, timerProgressBar:true });
+    {% for message in messages %}
+      Toast.fire({ icon:'info', title:"{{ message|escapejs }}" });
+    {% endfor %}
+  })();
+</script>
+{% endif %}
+
+<!-- Auto-fill ISBN when a book is selected (frontend convenience only) -->
+<script>
+  (function(){
+    const bookSel = document.getElementById('book');
+    const isbnSel = document.getElementById('isbn');
+    if(!bookSel || !isbnSel) return;
+
+    bookSel.addEventListener('change', function(){
+      const opt = this.options[this.selectedIndex];
+      const isbn = opt?.getAttribute('data-isbn');
+      if (isbn){
+        // set matching ISBN if present (still allows manual override)
+        isbnSel.value = isbn;
+      }
+    });
+  })();
+</script>
+{% endblock %}

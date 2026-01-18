@@ -1,0 +1,161 @@
+{% extends 'nav.html' %}
+{% load static %}
+
+{% block title %}Student Signup | Library Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+  .auth-wrap{
+    min-height: calc(100vh - 72px - 60px);
+    display: grid;
+    place-items: center;
+    padding: 32px 16px;
+  }
+  .auth-card{
+    width: 100%;
+    max-width: 720px;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(2,6,23,.10);
+    overflow: hidden;
+    background: #fff;
+  }
+  .auth-header{
+    background: linear-gradient(90deg, var(--brand-bg), #111827);
+    color:#fff;
+    padding: 18px 20px;
+    display:flex; align-items:center; gap:.75rem;
+  }
+  .auth-header i{ color: var(--brand-accent); }
+  .form-label{ font-weight:600; }
+  .form-control, .input-group-text{ border-radius:10px; }
+  .input-group-text{ background:#f3f4f6; }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="auth-wrap">
+  <div class="card auth-card">
+    <div class="auth-header">
+      <i class="fa-solid fa-id-card-clip fs-4"></i>
+      <div>
+        <h3 class="mb-0">Student Signup</h3>
+        <small class="opacity-75">Create your library account</small>
+      </div>
+    </div>
+
+    <div class="card-body p-4">
+      <form method="post" action="">
+        {% csrf_token %}
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="firstname">First Name</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+              <input type="text" id="firstname" name="firstname" class="form-control"
+                     placeholder="Enter first name" autocomplete="given-name" required>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="lastname">Last Name</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
+              <input type="text" id="lastname" name="lastname" class="form-control"
+                     placeholder="Enter last name" autocomplete="family-name" required>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="enroll">Enrollment No.</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-hashtag"></i></span>
+              <input type="text" id="enroll" name="enroll" class="form-control"
+                     placeholder="Enter enrollment number" required>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="branch">Branch</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-diagram-project"></i></span>
+              <input type="text" id="branch" name="branch" class="form-control"
+                     placeholder="Enter branch" required>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="username">User Name</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-at"></i></span>
+              <input type="text" id="username" name="username" class="form-control"
+                     placeholder="Choose a username" autocomplete="username" required>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="password">Password</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+              <input type="password" id="password" name="password" class="form-control"
+                     placeholder="Create a password" autocomplete="new-password" required>
+              <button type="button" class="btn btn-outline-secondary" id="togglePwd" aria-label="Show password">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mt-4">
+          <a href="{% url 'studentlogin' %}" class="text-decoration-none">
+            Already have an account? <span class="fw-semibold">Login</span> →
+          </a>
+          <button type="submit" class="btn btn-brand">
+            <i class="fa-solid fa-user-plus me-1"></i> Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Toggle password visibility
+  const toggle = document.getElementById('togglePwd');
+  if (toggle){
+    toggle.addEventListener('click', function(){
+      const inp = document.getElementById('password');
+      const icon = this.querySelector('i');
+      const isPwd = inp.getAttribute('type') === 'password';
+      inp.setAttribute('type', isPwd ? 'text' : 'password');
+      icon.classList.toggle('fa-eye');
+      icon.classList.toggle('fa-eye-slash');
+    });
+  }
+</script>
+
+{% if error %}
+<script>
+  Swal.fire({
+    icon: 'error',
+    title: 'Username already exists',
+    text: 'Please choose a different username.'
+  });
+</script>
+{% endif %}
+
+{% if error1 %}
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: 'Registration successful',
+    showConfirmButton: false,
+    timer: 1400
+  }).then(() => {
+    window.location.href = "{% url 'studentlogin' %}";
+  });
+</script>
+{% endif %}
+{% endblock %}
